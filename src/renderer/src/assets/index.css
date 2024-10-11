@@ -14,4 +14,12 @@
     @apply font-mono antialiased text-white;
     @apply overflow-hidden;
   }
+
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[#555] rounded-md;
+  }
 }

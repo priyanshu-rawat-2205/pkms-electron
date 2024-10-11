@@ -1,9 +1,16 @@
 import { ComponentProps } from 'react'
-import { DeleteNoteButton, NewNoteButton } from './Button'
+import { CollapseButton, DeleteNoteButton, NewNoteButton } from './Button'
 
-export const ActionButtonsRow = ({ ...props }: ComponentProps<'div'>) => {
+export type ActionButtonRowProps = ComponentProps<'div'> & {
+  expanded: boolean
+  setOpen?: () => void
+  setExpanded: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const ActionButtonsRow = ({ expanded, setExpanded, ...props }: ActionButtonRowProps) => {
   return (
     <div {...props}>
+      <CollapseButton expanded={expanded} setExpanded={setExpanded} />
       <NewNoteButton />
       <DeleteNoteButton />
     </div>
