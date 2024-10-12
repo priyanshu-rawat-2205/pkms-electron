@@ -1,4 +1,3 @@
-import { generateGraphMetadata } from '@renderer/store'
 import { PiGraph } from 'react-icons/pi'
 import { ActionButton, ActionButtonProps } from './ActionButton'
 
@@ -12,7 +11,6 @@ export const GraphViewButton = ({ graphView, setGraphView, ...props }: GraphView
     <ActionButton
       onClick={() => {
         setGraphView(!graphView)
-        generateGraphMetadata()
       }}
       {...props}
     >

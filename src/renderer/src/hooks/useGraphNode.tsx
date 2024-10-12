@@ -1,8 +1,8 @@
-import { GraphNodeDataAtom } from '@renderer/store'
+import { GraphNodeJSONAtom } from '@renderer/store'
 import { useAtomValue } from 'jotai'
 
 export const useGraphNode = () => {
-  const GraphNode = useAtomValue(GraphNodeDataAtom)
+  const GraphNode = useAtomValue(GraphNodeJSONAtom)
   return GraphNode
 }
 

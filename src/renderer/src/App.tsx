@@ -1,21 +1,20 @@
-import { Background, Controls, ReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useRef, useState } from 'react'
 import {
   ActionButtonsRow,
   Content,
   FloatingNoteTitle,
+  GraphView,
   MarkdownEditor,
   NotePreviewList,
   RootLayout,
   Sidebar
 } from './components'
-import { useGraphNode } from './hooks/useGraphNode'
 
 const App = () => {
   const [expanded, setExpanded] = useState(true)
   const [graphView, setGraphView] = useState(false)
-  const graphdata = useGraphNode()
+  // const graphdata = useGraphNode()
 
   const contentContainerRef = useRef<HTMLDivElement>(null)
 
@@ -30,12 +29,13 @@ const App = () => {
 
   const renderGraphView = () => {
     return (
-      <div className="w-screen h-screen text-black">
-        <ReactFlow fitView nodes={graphdata}>
-          <Background gap={12} size={1} />
-          <Controls />
-        </ReactFlow>
-      </div>
+      // <div className="w-screen h-screen text-black">
+      //   <ReactFlow fitView nodes={graphdata}>
+      //     <Background gap={12} size={1} />
+      //     <Controls />
+      //   </ReactFlow>
+      // </div>
+      <GraphView />
     )
   }
 

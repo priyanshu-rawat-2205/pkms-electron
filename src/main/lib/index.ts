@@ -100,6 +100,8 @@ export const createNote: CreateNote = async () => {
   console.info(`Creating note: ${filePath}`)
   await writeFile(filePath, '')
 
+  await generateGraphJSON()
+
   return filename
 }
 
@@ -122,6 +124,7 @@ export const deleteNote: DeleteNote = async (filename) => {
 
   console.info(`Deleting note: ${filename}`)
   await remove(`${rootDir}/${filename}.md`)
+  await generateGraphJSON()
   return true
 }
 
@@ -159,4 +162,18 @@ export const generateGraphJSON = async () => {
   console.log('graph metadata generated')
 
   return data
+}
+
+export const readGraphNodeJSON = async (): Promise<
+  {
+    id: string
+    position: { x: number; y: number }
+    data: { label: string }
+  }[]
+> => {
+  const rootDir = getRootDir()
+  const graphData = await readFile(`${rootDir}/${graphMetaDataFilename}`, fileEncoding)
+  const graphDataJSON = JSON.parse(graphData)
+  console.log('read data from graphJSON')
+  return graphDataJSON
 }

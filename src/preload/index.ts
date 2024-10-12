@@ -13,7 +13,8 @@ try {
     writeNote: (...args: Parameters<WriteNote>) => ipcRenderer.invoke('writeNote', ...args),
     createNote: (...args: Parameters<CreateNote>) => ipcRenderer.invoke('createNote', ...args),
     deleteNote: (...args: Parameters<DeleteNote>) => ipcRenderer.invoke('deleteNote', ...args),
-    generateGraphJSON: () => ipcRenderer.invoke('generateGraphJSON')
+    generateGraphJSON: () => ipcRenderer.invoke('generateGraphJSON'),
+    readGraphNodeJSON: () => ipcRenderer.invoke('readGraphNodeJSON')
   })
 } catch (error) {
   console.error(error)

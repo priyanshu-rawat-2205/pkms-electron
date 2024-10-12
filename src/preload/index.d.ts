@@ -17,6 +17,7 @@ declare global {
       createNote: CreateNote
       deleteNote: DeleteNote
       generateGraphJSON: GenerateGraphJSON
+      readGraphNodeJSON: GenerateGraphJSON
     }
   }
 }

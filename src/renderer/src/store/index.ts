@@ -106,18 +106,24 @@ export const deleteNoteAtom = atom(null, async (get, set) => {
   set(selectedNoteIndexAtom, null)
 })
 
-export const getGraphMetaDataAsync = async () => {
+const getGraphMetaDataAsync = async () => {
   const data = await window.context.generateGraphJSON()
   return data
 }
 export const GraphNodeAtom = atom([{ id: '0', position: { x: 0, y: 0 }, data: { label: '' } }])
 
-const GraphNodeDataAtomAsync = atom(getGraphMetaDataAsync())
-
-export const GraphNodeDataAtom = unwrap(
-  GraphNodeDataAtomAsync,
-  (prev) => prev ?? [{ id: '0', position: { x: 0, y: 0 }, data: { label: '' } }]
-)
 export const generateGraphMetadata = async () => {
   await window.context.generateGraphJSON()
 }
+
+export const getGraphNodeJSON = async () => {
+  const data = await window.context.readGraphNodeJSON()
+  return data
+}
+
+const GraphNodeJSONAtomAsync = atom(getGraphNodeJSON())
+
+export const GraphNodeJSONAtom = unwrap(
+  GraphNodeJSONAtomAsync,
+  (prev) => prev ?? [{ id: '0', position: { x: 0, y: 0 }, data: { label: '' } }]
+)
