@@ -1,8 +1,13 @@
-import { appDirectoryName, fileEncoding, welcomeNoteFilename } from '@shared/constants'
+import {
+  appDirectoryName,
+  fileEncoding,
+  graphMetaDataFilename,
+  welcomeNoteFilename
+} from '@shared/constants'
 import { NoteInfo } from '@shared/models'
 import { CreateNote, DeleteNote, GetNotes, ReadNote, WriteNote } from '@shared/types'
 import { dialog } from 'electron'
-import { ensureDir, readFile, readdir, remove, stat, writeFile } from 'fs-extra'
+import { ensureDir, ensureFile, readdir, readFile, remove, stat, writeFile } from 'fs-extra'
 import { isEmpty } from 'lodash'
 import { homedir } from 'os'
 import path from 'path'
@@ -118,4 +123,40 @@ export const deleteNote: DeleteNote = async (filename) => {
   console.info(`Deleting note: ${filename}`)
   await remove(`${rootDir}/${filename}.md`)
   return true
+}
+
+export const generateGraphJSON = async () => {
+  const rootDir = getRootDir()
+
+  await ensureDir(rootDir)
+  await ensureFile(`${rootDir}/${graphMetaDataFilename}`)
+
+  const notesFileNames = await readdir(rootDir, {
+    encoding: fileEncoding,
+    withFileTypes: false
+  })
+
+  const generatePos = (i: number) => {
+    const rand = Math.floor(Math.random() * (10 - -10) + -10)
+    const x = rand + 100 * i
+    const y = rand + 150 * i + 100
+    return { x, y }
+  }
+
+  const notes = notesFileNames.filter((fileName) => fileName.endsWith('.md'))
+  const data = notes.map((note, i) => {
+    const { x, y } = generatePos(i)
+    const intermediate = {
+      id: `${i}`,
+      position: { x: x, y: y },
+      data: { label: note.replace(/\.md$/, '') }
+    }
+    return intermediate
+  })
+  const content = JSON.stringify(data)
+
+  writeFile(`${rootDir}/${graphMetaDataFilename}`, content, { encoding: fileEncoding })
+  console.log('graph metadata generated')
+
+  return data
 }

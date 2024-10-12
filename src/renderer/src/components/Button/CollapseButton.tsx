@@ -5,7 +5,6 @@ import { ActionButton, ActionButtonProps } from './ActionButton'
 
 export type CollapseButtonProps = ActionButtonProps & {
   expanded: boolean
-  setOpen?: () => void
   setExpanded: React.Dispatch<React.SetStateAction<boolean>>
 }
 

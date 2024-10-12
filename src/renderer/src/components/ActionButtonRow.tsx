@@ -1,18 +1,26 @@
 import { ComponentProps } from 'react'
-import { CollapseButton, DeleteNoteButton, NewNoteButton } from './Button'
+import { CollapseButton, DeleteNoteButton, GraphViewButton, NewNoteButton } from './Button'
 
 export type ActionButtonRowProps = ComponentProps<'div'> & {
   expanded: boolean
-  setOpen?: () => void
   setExpanded: React.Dispatch<React.SetStateAction<boolean>>
+  graphView: boolean
+  setGraphView: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const ActionButtonsRow = ({ expanded, setExpanded, ...props }: ActionButtonRowProps) => {
+export const ActionButtonsRow = ({
+  graphView,
+  setGraphView,
+  expanded,
+  setExpanded,
+  ...props
+}: ActionButtonRowProps) => {
   return (
     <div {...props}>
       <CollapseButton expanded={expanded} setExpanded={setExpanded} />
       <NewNoteButton />
       <DeleteNoteButton />
+      <GraphViewButton graphView={graphView} setGraphView={setGraphView} />
     </div>
   )
 }
