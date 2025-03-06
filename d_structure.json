@@ -1,0 +1,44 @@
+[
+  {"type":"directory","name":".","contents":[
+    {"type":"file","name":"components.json"},
+    {"type":"file","name":"d_structure.json"},
+    {"type":"directory","name":"electron","contents":[
+      {"type":"file","name":"electron-env.d.ts"},
+      {"type":"file","name":"main.ts"},
+      {"type":"file","name":"preload.ts"}
+  ]},
+    {"type":"file","name":"electron-builder.json5"},
+    {"type":"file","name":"get_d_structure.sh"},
+    {"type":"file","name":"index.html"},
+    {"type":"file","name":"package.json"},
+    {"type":"file","name":"package-lock.json"},
+    {"type":"directory","name":"public","contents":[
+      {"type":"file","name":"electron-vite.animate.svg"},
+      {"type":"file","name":"electron-vite.svg"},
+      {"type":"file","name":"vite.svg"}
+  ]},
+    {"type":"file","name":"README.md"},
+    {"type":"directory","name":"src","contents":[
+      {"type":"file","name":"App.tsx"},
+      {"type":"directory","name":"assets","contents":[
+        {"type":"file","name":"react.svg"}
+    ]},
+      {"type":"directory","name":"components","contents":[
+        {"type":"directory","name":"ui","contents":[
+          {"type":"file","name":"button.tsx"}
+      ]}
+    ]},
+      {"type":"file","name":"index.css"},
+      {"type":"directory","name":"lib","contents":[
+        {"type":"file","name":"utils.ts"}
+    ]},
+      {"type":"file","name":"main.tsx"},
+      {"type":"file","name":"vite-env.d.ts"}
+  ]},
+    {"type":"file","name":"tsconfig.json"},
+    {"type":"file","name":"tsconfig.node.json"},
+    {"type":"file","name":"vite.config.ts"}
+  ]}
+,
+  {"type":"report","directories":7,"files":24}
+]
