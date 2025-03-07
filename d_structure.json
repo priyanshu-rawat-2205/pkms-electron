@@ -24,8 +24,13 @@
         {"type":"file","name":"react.svg"}
     ]},
       {"type":"directory","name":"components","contents":[
+        {"type":"directory","name":"custom","contents":[
+          {"type":"file","name":"MarkdownEditor.tsx"},
+          {"type":"file","name":"Sidebar.tsx"}
+      ]},
         {"type":"directory","name":"ui","contents":[
-          {"type":"file","name":"button.tsx"}
+          {"type":"file","name":"button.tsx"},
+          {"type":"file","name":"collapsible.tsx"}
       ]}
     ]},
       {"type":"file","name":"index.css"},
@@ -39,6 +44,7 @@
     {"type":"file","name":"tsconfig.node.json"},
     {"type":"file","name":"vite.config.ts"}
   ]}
-,
-  {"type":"report","directories":7,"files":24}
 ]
+
+
+
