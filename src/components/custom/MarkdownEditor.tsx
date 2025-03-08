@@ -6,11 +6,19 @@ import {
   quotePlugin,
 } from "@mdxeditor/editor";
 
-const MarkdownEditor = () => {
+interface MarkdownEditorProps {
+  markdown: string;
+  setMarkdown: (content: string) => void;
+}
 
+const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
+  markdown,
+  setMarkdown,
+}: MarkdownEditorProps) => {
   return (
     <MDXEditor
-      markdown={'# some markdown content'}
+      markdown={markdown}
+      onChange={setMarkdown}
       plugins={[
         headingsPlugin(),
         listsPlugin(),
@@ -28,3 +36,10 @@ const MarkdownEditor = () => {
 };
 
 export default MarkdownEditor;
+
+
+
+
+
+
+
