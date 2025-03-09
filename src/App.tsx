@@ -102,7 +102,7 @@ const App: React.FC = () => {
         <div className="flex-1 overflow-auto p-4 pt-16">
           <Toaster />
           {viewMode === 'editor' ? (
-            <div key={currentFile}>
+            <div scrollbar-hide key={currentFile}>
               <MarkdownEditor 
                 markdown={markdown} 
                 setMarkdown={handleMarkdownChange}

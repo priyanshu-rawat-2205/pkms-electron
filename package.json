@@ -2,6 +2,10 @@
   "name": "pkms",
   "private": true,
   "version": "1.0.1",
+  "author": {
+    "name": "Priyanshu Rawat",
+    "email": "dev.priyanshurawat@gmail.com"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

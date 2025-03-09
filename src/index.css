@@ -125,3 +125,51 @@
   }
 }
 
+/* Webkit browsers (Chrome, Safari, newer Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(0.274 0.006 286.033); /* matches your dark secondary color */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.442 0.017 285.786); /* matches your dark ring color */
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.705 0.015 286.067); /* matches your dark muted-foreground color */
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.442 0.017 285.786) oklch(0.274 0.006 286.033);
+}
+
+/* Hide scrollbar when not hovering (optional) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Show scrollbar on hover (optional) */
+.hover-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  &:hover::-webkit-scrollbar {
+    display: block;
+  }
+}
+
