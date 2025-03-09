@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import Sidebar from "./components/custom/Sidebar";
 import MarkdownEditor from "./components/custom/MarkdownEditor";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import GraphView from "./components/custom/GraphView";
+import Navbar from "./components/custom/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
+
 
 const App: React.FC = () => {
   const [markdown, setMarkdown] = useState("");
   const [currentFile, setCurrentFile] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'editor' | 'graph'>('editor');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleFileSelect = async (filename: string) => {
     const content = await window.electronAPI.readFile(filename);
@@ -30,32 +33,41 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-gray-900 overflow-y-auto text-white">
+    <div className="flex h-screen w-screen bg-gray-900 overflow-hidden text-white">
       <Sidebar 
-        onFileSelect={handleFileSelect} 
+        onFileSelect={(filename) => {
+          handleFileSelect(filename);
+          setViewMode('editor');
+          setIsSidebarOpen(false);
+        }} 
         selectedFile={currentFile}
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
       />
-      <div className="flex-1 flex flex-col p-4">
-        <Toaster />
-        {currentFile && (
-          <Card className="mb-2 mt-12 bg-gray-800 border-none">
-            <CardContent className="flex justify-between items-center">
-              <p className="text-xl text-gray-400">{currentFile}</p>
-              <Button
-                onClick={handleSave}
-                className="bg-blue-500 hover:bg-blue-600"
-              >
-                Save
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-        <div key={currentFile}>
-          <MarkdownEditor 
-            markdown={markdown} 
-            setMarkdown={setMarkdown}
-            onFileReference={handleFileReference}
-          />
+      <div className="flex-1 flex flex-col">
+        <Navbar 
+          currentFile={currentFile}
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          onSave={handleSave}
+          onMenuClick={() => setIsSidebarOpen(true)}
+        />
+        <div className="flex-1 overflow-auto p-4 pt-16">
+          <Toaster />
+          {viewMode === 'editor' ? (
+            <div key={currentFile}>
+              <MarkdownEditor 
+                markdown={markdown} 
+                setMarkdown={setMarkdown}
+                onFileReference={handleFileReference}
+              />
+            </div>
+          ) : (
+            <GraphView 
+              onNodeClick={handleFileSelect} 
+              setViewMode={setViewMode}
+            />
+          )}
         </div>
       </div>
     </div>

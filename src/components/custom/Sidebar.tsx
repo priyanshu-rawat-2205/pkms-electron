@@ -15,14 +15,17 @@ import { Input } from "@/components/ui/input";
 interface SidebarProps {
   onFileSelect: (filename: string) => void;
   selectedFile: string | null;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   onFileSelect,
   selectedFile,
+  isOpen,
+  setIsOpen
 }) => {
   const [files, setFiles] = useState<string[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newFileName, setNewFileName] = useState("");
 
