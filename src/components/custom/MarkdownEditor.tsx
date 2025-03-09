@@ -125,17 +125,15 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     const content = editorRef.current?.getMarkdown() || '';
     console.log('Current content:', content);
     
-    // Find the last \[\[ that doesn't have a closing \]\]
     const lastOpenBrackets = content.lastIndexOf('\\[\\[');
     console.log('Last \[\[ at:', lastOpenBrackets);
     
     if (lastOpenBrackets !== -1) {
       const displayName = filename.replace('.md', '');
+      const encodedFilename = encodeURIComponent(filename);
       const newContent = 
         content.slice(0, lastOpenBrackets) + 
-        // `\\[\\[${filename}\\]\\]` + 
-        // content.slice(lastOpenBrackets + 4); // Changed from +2 to +4 because of escaped brackets
-        `[${displayName}](${filename})` + 
+        `[${displayName}](${encodedFilename})` + 
         content.slice(lastOpenBrackets + 4);
 
       console.log('New content:', newContent);
@@ -148,18 +146,14 @@ const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   const handleLinkClick = (event: React.MouseEvent) => {
     console.log('Click detected');
     const target = event.target as HTMLElement;
-    console.log('Clicked element:', target.tagName, target);
-    
-    // Try to find the closest anchor tag (in case we clicked on a child element)
     const linkElement = target.closest('a');
-    console.log('Found link element:', linkElement);
 
     if (linkElement) {
       event.preventDefault();
       const filename = linkElement.getAttribute('href');
       console.log('Found filename:', filename);
       if (filename && onFileReference) {
-        onFileReference(filename);
+        onFileReference(decodeURIComponent(filename));
       }
     }
   };

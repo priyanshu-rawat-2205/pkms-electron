@@ -42,11 +42,15 @@ const GraphView: React.FC<GraphViewProps> = ({ onNodeClick, setViewMode }) => {
       
       references.forEach(ref => {
         const match = ref.match(/\[([^\]]+)\]\(([^)]+)\)/);
-        if (match && files.includes(match[2])) {
-          links.push({
-            source: file,
-            target: match[2]
-          });
+        if (match) {
+          const targetFile = decodeURIComponent(match[2]); // Decode the filename
+          // Only add link if target file exists
+          if (files.includes(targetFile)) {
+            links.push({
+              source: file,
+              target: targetFile
+            });
+          }
         }
       });
     }

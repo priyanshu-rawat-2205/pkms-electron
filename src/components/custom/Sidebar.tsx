@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Trash, Menu, FilePlus, FolderOpen } from "lucide-react";
+import { Trash, FilePlus, FolderOpen, Search } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   setIsOpen
 }) => {
   const [files, setFiles] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newFileName, setNewFileName] = useState("");
 
@@ -36,6 +37,10 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
     fetchFiles();
   }, []);
+
+  const filteredFiles = files.filter(file => 
+    file.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleSelectDirectory = async () => {
     const directory = await window.electronAPI.selectDirectory();
@@ -57,40 +62,56 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (window.confirm(`Delete ${filename}?`)) {
       await window.electronAPI.deleteFile(filename);
       setFiles(await window.electronAPI.listFiles());
+      
+      // Clear editor if the deleted file was open
+      if (selectedFile === filename) {
+        onFileSelect(''); // This will trigger clearing the editor
+      }
     }
   };
 
   return (
-    <>
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetTrigger asChild>
-          <Button variant="ghost" className="fixed top-4 left-4 z-50">
-            <Menu className="w-6 h-6" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-64 bg-gray-900 text-white p-4">
-          <div className="flex flex-col gap-3">
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetContent side="left" className="w-64 bg-gray-900 text-white p-4">
+        <div className="flex flex-col gap-4">
+          {/* Search Input */}
+          <div className="relative w-8/9">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search files..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 bg-gray-800 border-gray-700"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-2">
             <Button
               onClick={handleSelectDirectory}
-              variant="secondary"
-              className="flex items-center gap-2"
+              variant="ghost"
+              size="icon"
+              className="flex-1 hover:bg-gray-800"
             >
-              <FolderOpen className="w-5 h-5" /> Select Directory
+              <FolderOpen className="w-5 h-5" />
             </Button>
             <Button
               onClick={() => setIsCreateDialogOpen(true)}
-              variant="secondary"
-              className="flex items-center gap-2"
+              variant="ghost"
+              size="icon"
+              className="flex-1 hover:bg-gray-800"
             >
-              <FilePlus className="w-5 h-5" /> Create Note
+              <FilePlus className="w-5 h-5" />
             </Button>
           </div>
-          <ScrollArea className="mt-4 h-[70vh]">
+
+          {/* Files List */}
+          <ScrollArea className="flex-1 h-[calc(100vh-8rem)]">
             <ul className="space-y-2">
-              {files.map((file) => (
+              {filteredFiles.map((file) => (
                 <li
                   key={file}
-                  className={`flex justify-between items-center p-2 rounded cursor-pointer hover:bg-gray-800 transition ${
+                  className={`flex items-center p-2 rounded cursor-pointer hover:bg-gray-800 transition ${
                     selectedFile === file ? "bg-gray-800" : ""
                   }`}
                   onClick={() => {
@@ -98,13 +119,15 @@ const Sidebar: React.FC<SidebarProps> = ({
                     setIsOpen(false);
                   }}
                 >
-                  <span>{file}</span>
+                  <div className="w-44 min-w-0">
+                    <span className="block truncate text-sm">{file.replace('.md', '')}</span>
+                  </div>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteFile(file);
                     }}
-                    className="text-red-400 hover:text-red-500"
+                    className="text-red-400 hover:text-red-500 flex-shrink-0 ml-2"
                   >
                     <Trash className="w-4 h-4" />
                   </button>
@@ -112,8 +135,9 @@ const Sidebar: React.FC<SidebarProps> = ({
               ))}
             </ul>
           </ScrollArea>
-        </SheetContent>
-      </Sheet>
+        </div>
+      </SheetContent>
+
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="bg-gray-900 text-white">
           <DialogHeader>
@@ -148,8 +172,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
-
+    </Sheet>
   );
 };
 

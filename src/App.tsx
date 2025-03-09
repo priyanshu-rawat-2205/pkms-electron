@@ -14,6 +14,23 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleFileSelect = async (filename: string) => {
+    // Clear editor if filename is empty
+    if (!filename) {
+      setMarkdown("");
+      setCurrentFile(null);
+      return;
+    }
+
+    // Check if file exists before loading
+    const files = await window.electronAPI.listFiles();
+    if (!files.includes(filename)) {
+      toast("File not found", {
+        description: `The file "${filename}" no longer exists.`,
+        duration: 3000,
+      });
+      return;
+    }
+
     const content = await window.electronAPI.readFile(filename);
     setMarkdown(content);
     setCurrentFile(filename);
@@ -28,7 +45,16 @@ const App: React.FC = () => {
     }
   };
 
-  const handleFileReference = (filename: string) => {
+  const handleFileReference = async (filename: string) => {
+    // Check if file exists before following reference
+    const files = await window.electronAPI.listFiles();
+    if (!files.includes(filename)) {
+      toast("Broken Link", {
+        description: `The referenced file "${filename}" no longer exists.`,
+        duration: 3000,
+      });
+      return;
+    }
     handleFileSelect(filename);
   };
 
