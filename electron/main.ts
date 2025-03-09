@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import fs from 'fs';
 import path from 'path';
+import Store from 'electron-store';
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -18,6 +19,18 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
   : RENDERER_DIST;
 
 let win: BrowserWindow | null;
+
+// Initialize electron store with specific configuration
+const store = new Store({
+  name: 'markdown-app-data', // Specific name for our store
+  clearInvalidConfig: true,  // Clear invalid data
+  defaults: {               // Default values
+    lastOpenedDirectory: null,
+    lastOpenedFile: null
+  }
+});
+
+console.log('Store path:', store.path);
 
 function createWindow() {
   win = new BrowserWindow({
@@ -56,15 +69,43 @@ app.whenReady().then(createWindow);
 // -------- File System Operations -------- //
 let selectedDirectory: string | null = null; // Store the selected directory path
 
-// Select directory
+// Add these new IPC handlers
+ipcMain.handle("get-last-opened-directory", () => {
+  const dir = store.get('lastOpenedDirectory');
+  console.log('Retrieved last directory:', dir);
+  if (dir && fs.existsSync(dir)) {
+    selectedDirectory = dir; // Set the selectedDirectory when retrieving
+    return dir;
+  }
+  return null; // Return null if directory doesn't exist
+});
+
+ipcMain.handle("get-last-opened-file", () => {
+  return store.get('lastOpenedFile');
+});
+
+ipcMain.handle("set-last-opened-directory", (_, directory: string) => {
+  console.log('Saving directory:', directory);
+  store.set('lastOpenedDirectory', directory);
+});
+
+ipcMain.handle("set-last-opened-file", (_, file: string) => {
+  store.set('lastOpenedFile', file);
+});
+
+// Modify the existing select-directory handler
 ipcMain.handle("select-directory", async () => {
   const result = await dialog.showOpenDialog(win!, {
     properties: ["openDirectory"],
   });
 
-  if (result.canceled) return null;
-  selectedDirectory = result.filePaths[0]; // Store the selected directory
-  return selectedDirectory;
+  if (!result.canceled) {
+    selectedDirectory = result.filePaths[0];
+    console.log('Selected directory:', selectedDirectory);
+    store.set('lastOpenedDirectory', selectedDirectory);
+    return selectedDirectory;
+  }
+  return null;
 });
 
 // List markdown files in directory

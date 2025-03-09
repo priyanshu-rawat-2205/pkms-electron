@@ -31,6 +31,10 @@ interface Window {
     createFile: (filename: string) => Promise<string | null>;
     saveFile: (filename: string, content: string) => Promise<boolean>;
     deleteFile: (filename: string) => Promise<boolean>;
+    getLastOpenedDirectory: () => Promise<string | null>;
+    getLastOpenedFile: () => Promise<string | null>;
+    setLastOpenedDirectory: (directory: string) => Promise<void>;
+    setLastOpenedFile: (file: string) => Promise<void>;
   };
 }
 

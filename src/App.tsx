@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { debounce } from "lodash";
 import Sidebar from "./components/custom/Sidebar";
 import MarkdownEditor from "./components/custom/MarkdownEditor";
 import GraphView from "./components/custom/GraphView";
@@ -13,6 +14,24 @@ const App: React.FC = () => {
   const [viewMode, setViewMode] = useState<'editor' | 'graph'>('editor');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const debouncedSave = useCallback(
+    debounce(async (content: string, file: string) => {
+      await window.electronAPI.saveFile(file, content);
+      toast("Auto-saved", {
+        description: `${file} has been saved.`,
+        duration: 2000,
+      });
+    }, 1000),
+    []
+  );
+
+  const handleMarkdownChange = (content: string) => {
+    setMarkdown(content);
+    if (currentFile) {
+      debouncedSave(content, currentFile);
+    }
+  };
+
   const handleFileSelect = async (filename: string) => {
     // Clear editor if filename is empty
     if (!filename) {
@@ -26,7 +45,7 @@ const App: React.FC = () => {
     if (!files.includes(filename)) {
       toast("File not found", {
         description: `The file "${filename}" no longer exists.`,
-        duration: 3000,
+        duration: 2000,
       });
       return;
     }
@@ -34,6 +53,8 @@ const App: React.FC = () => {
     const content = await window.electronAPI.readFile(filename);
     setMarkdown(content);
     setCurrentFile(filename);
+    // Save last opened file
+    await window.electronAPI.setLastOpenedFile(filename);
   };
 
   const handleSave = async () => {
@@ -84,7 +105,7 @@ const App: React.FC = () => {
             <div key={currentFile}>
               <MarkdownEditor 
                 markdown={markdown} 
-                setMarkdown={setMarkdown}
+                setMarkdown={handleMarkdownChange}
                 onFileReference={handleFileReference}
               />
             </div>

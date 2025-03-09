@@ -29,25 +29,65 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newFileName, setNewFileName] = useState("");
+  const [hasLoadedInitialDirectory, setHasLoadedInitialDirectory] = useState(false);
+  const [currentDirectory, setCurrentDirectory] = useState<string>("");
 
-  useEffect(() => {
-    async function fetchFiles() {
+  const handleSelectDirectory = async () => {
+    console.log('Selecting directory...');
+    const directory = await window.electronAPI.selectDirectory();
+    if (directory) {
+      console.log('Selected directory:', directory);
+      setCurrentDirectory(directory.split('/').pop() || '');
       const files = await window.electronAPI.listFiles();
       setFiles(files);
+      setHasLoadedInitialDirectory(true);
     }
-    fetchFiles();
-  }, []);
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadLastDirectory() {
+      if (!mounted || hasLoadedInitialDirectory) return;
+
+      console.log('Loading last directory...');
+      const lastDir = await window.electronAPI.getLastOpenedDirectory();
+      console.log('Last directory:', lastDir);
+
+      if (lastDir) {
+        setCurrentDirectory(lastDir.split('/').pop() || '');
+        const files = await window.electronAPI.listFiles();
+        console.log('Files in directory:', files);
+        
+        if (files && files.length > 0) {
+          if (mounted) {
+            setFiles(files);
+            const lastFile = await window.electronAPI.getLastOpenedFile();
+            console.log('Last file:', lastFile);
+            
+            if (lastFile && files.includes(lastFile)) {
+              onFileSelect(lastFile);
+            }
+            setHasLoadedInitialDirectory(true);
+          }
+        } else if (mounted) {
+          handleSelectDirectory();
+        }
+      } else if (mounted) {
+        handleSelectDirectory();
+      }
+    }
+
+    loadLastDirectory();
+
+    return () => {
+      mounted = false;
+    };
+  }, [hasLoadedInitialDirectory, onFileSelect]);
 
   const filteredFiles = files.filter(file => 
     file.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const handleSelectDirectory = async () => {
-    const directory = await window.electronAPI.selectDirectory();
-    if (directory) {
-      setFiles(await window.electronAPI.listFiles());
-    }
-  };
 
   const handleCreateFile = async () => {
     if (newFileName.trim()) {
@@ -74,6 +114,15 @@ const Sidebar: React.FC<SidebarProps> = ({
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetContent side="left" className="w-64 bg-gray-900 text-white p-4">
         <div className="flex flex-col gap-4">
+          {/* Add folder name */}
+          {currentDirectory && (
+            <div className="flex items-center gap-2 px-2 py-1 bg-gray-800 rounded">
+              <FolderOpen className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-gray-300 truncate">
+                {currentDirectory}
+              </span>
+            </div>
+          )}
           {/* Search Input */}
           <div className="relative w-8/9">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />

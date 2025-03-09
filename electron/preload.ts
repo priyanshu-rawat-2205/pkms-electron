@@ -1,4 +1,3 @@
-
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld("electronAPI", {
@@ -9,4 +8,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
   saveFile: (filename: string, content: string) =>
     ipcRenderer.invoke("save-file", filename, content),
   deleteFile: (filename: string) => ipcRenderer.invoke("delete-file", filename),
+  getLastOpenedDirectory: () => ipcRenderer.invoke('get-last-opened-directory'),
+  getLastOpenedFile: () => ipcRenderer.invoke('get-last-opened-file'),
+  setLastOpenedDirectory: (directory: string) => ipcRenderer.invoke('set-last-opened-directory', directory),
+  setLastOpenedFile: (file: string) => ipcRenderer.invoke('set-last-opened-file', file),
 });
