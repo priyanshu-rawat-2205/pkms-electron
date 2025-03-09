@@ -1,5 +1,4 @@
 import React from 'react';
-import { Command } from "@/components/ui/command";
 // import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface FileReferenceAutoCompleteProps {
@@ -13,6 +12,7 @@ const FileReferenceAutoComplete: React.FC<FileReferenceAutoCompleteProps> = ({
   files,
   isOpen,
   onSelect,
+  // @ts-ignore
   triggerRef
 }) => {
   console.log('FileReferenceAutoComplete:', { files, isOpen });

@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import Store from 'electron-store';
 
+// @ts-ignore
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
